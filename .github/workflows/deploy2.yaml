@@ -24,13 +24,20 @@ jobs:
     - name: Run Unit Tests
       run: npm test
 
+    # 🔹 Start the Server Before Running Integration Tests
+    - name: Start Server
+      run: |
+        npm start &
+        sleep 10  # Wait for the server to start
+
     - name: Run Integration Tests
       run: npm run test:integration
 
+    # 🔹 Build and Deploy Docker Container
     - name: Build Docker Image
       run: docker build -t my-html-app .
 
-    - name: Stop and Remove Old Container
+    - name: Stop and Remove Old Container (if exists)
       run: |
         docker stop my-html-container || true
         docker rm my-html-container || true

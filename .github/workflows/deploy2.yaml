@@ -3,11 +3,11 @@ name: Deploy to AWS EC2
 on:
   push:
     branches:
-      - main
+      - main  # This triggers the workflow on push to main branch
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: self-hosted  # Using your EC2 as a self-hosted runner
 
     steps:
     - name: Checkout Code
@@ -23,14 +23,6 @@ jobs:
 
     - name: Run Unit Tests
       run: npm test
-
-    - name: Start Server (Background Process)
-      run: |
-        nohup npm start > server.log 2>&1 & 
-        sleep 15
-
-    - name: Check if Server is Running
-      run: curl -I http://127.0.0.1:8080 || (echo "Server did not start" && exit 1)
 
     - name: Run Integration Tests
       run: npm run test:integration

@@ -24,20 +24,21 @@ jobs:
     - name: Run Unit Tests
       run: npm test
 
-    # 🔹 Start the Server Before Running Integration Tests
-    - name: Start Server
+    - name: Start Server (Background Process)
       run: |
-        npm start &
-        sleep 10  # Wait for the server to start
+        nohup npm start > server.log 2>&1 & 
+        sleep 15
+
+    - name: Check if Server is Running
+      run: curl -I http://127.0.0.1:8080 || (echo "Server did not start" && exit 1)
 
     - name: Run Integration Tests
       run: npm run test:integration
 
-    # 🔹 Build and Deploy Docker Container
     - name: Build Docker Image
       run: docker build -t my-html-app .
 
-    - name: Stop and Remove Old Container (if exists)
+    - name: Stop and Remove Old Container
       run: |
         docker stop my-html-container || true
         docker rm my-html-container || true
